@@ -15,12 +15,12 @@ result = 0
 while end <= n:
     part_sum = sum[end] - sum[start - 1]
 
-    if part_sum < m:
-        end += 1
+    if part_sum == m:
+        result += 1
+        start += 1
     elif part_sum > m:
         start += 1
     else:
-        result += 1
         end += 1
 
 print(result)
