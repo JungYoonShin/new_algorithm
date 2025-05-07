@@ -1,5 +1,3 @@
-from itertools import permutations
-
 def solution(numbers):
     answer = sorted(numbers, key = lambda x : str(x)*3, reverse=True)
     
