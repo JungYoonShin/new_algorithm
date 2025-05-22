@@ -1,32 +1,27 @@
 import sys
-
-input = sys.stdin.readline
+input=sys.stdin.readline
 
 n = int(input())
 m = int(input())
 
-graph = [[1e9 for _ in range(n+1)] for _ in range(n+1)]
-
-for i in range(1, n + 1):
-    for j in range(1, n + 1):
-        if i == j:
-            graph[i][j] = 0
-
+cost = [[1e9 for _ in range(n)] for _ in range(n)]
 for _ in range(m):
     a, b, c = map(int, input().split())
-    graph[a][b] = min(graph[a][b], c)
+    if cost[a-1][b-1] != 1e9:
+        cost[a-1][b-1] = min(cost[a-1][b-1], c)
+    else:
+        cost[a - 1][b - 1] = c
 
+for k in range(n):
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                cost[i][j] = 0
+                continue
+            if cost[i][k] + cost[k][j] < cost[i][j]:
+                cost[i][j] = cost[i][k] + cost[k][j]
 
-
-for k in range(1, n+1):
-    for i in range(1, n+1):
-        for j in range(1, n+1):
-            graph[i][j] = min(graph[i][j], graph[i][k] + graph[k][j])
-
-for i in range(1, n+1):
-    for j in range(1, n+1):
-        if graph[i][j] == 1e9:
-            print(0, end=' ')
-        else:
-            print(graph[i][j], end =' ')
+for i in range(n):
+    for j in range(n):
+        print(0 if cost[i][j] == 1e9 else cost[i][j], end=" ")
     print()
