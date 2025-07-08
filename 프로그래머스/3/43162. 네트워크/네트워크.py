@@ -1,18 +1,17 @@
 def solution(n, computers):
     answer = 0
     
-    visited = [0] * len(computers)
+    visited = [False] * n
     
-    def dfs(i):
-        for i, connect in enumerate(computers[i]):
-            if not visited[i] and connect:
-                visited[i] = True
+    def dfs(v):
+        visited[v] = True
+        for i in range(n):
+            if computers[v][i] and not visited[i]:
                 dfs(i)
-
-    for i, computer in enumerate(computers):
+    
+    for i in range(n):
         if not visited[i]:
-            visited[i] = True
             answer += 1
             dfs(i)
-        
+
     return answer
