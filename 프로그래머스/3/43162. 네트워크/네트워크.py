@@ -1,17 +1,17 @@
 def solution(n, computers):
     answer = 0
     
-    visited = [False] * n
-    
-    def dfs(v):
-        visited[v] = True
+    def dfs(x):
+        visited[x] = True
+        
         for i in range(n):
-            if computers[v][i] and not visited[i]:
+            if computers[x][i] and not visited[i]:
                 dfs(i)
     
+    visited = [0] * n
     for i in range(n):
         if not visited[i]:
-            answer += 1
             dfs(i)
-
+            answer += 1
+    
     return answer
