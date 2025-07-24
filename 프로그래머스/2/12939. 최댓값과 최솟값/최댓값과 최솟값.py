@@ -1,7 +1,6 @@
 def solution(s):
     answer = ''
-    num = s.split()
-    num = [int(n) for n in num]
-    num.sort()
+    s = list(map(int, s.split()))
+    s.sort()
     
-    return str(num[0]) + " " + str(num[-1])
+    return str(s[0]) + " "  + str(s[-1])
