@@ -2,35 +2,35 @@ from collections import defaultdict
 from itertools import combinations
 from bisect import bisect_left
 
-def solution(info, query):
+def solution(information, query):
     answer = []
+    dic = defaultdict(list)
     
-    info_list = defaultdict(list)
-    for infos in info:
-        a = infos.split()
-        need = a[:-1]
-        score = int(a[-1])
+    for info in information:
+        infos = info.split()
+        key = infos[:-1]
+        score = int(infos[-1])
         
-        for n in range(5): # '-'가 들어갈 수 있는 개수 (0~4)
-            for combi in combinations(range(4), n): #'-'가 들어갈 수 있는 위치
-                temp = need[:]
-                for idx in combi:
+        for i in range(5):
+            case = list(combinations([0,1,2,3], i))
+            for c in case:
+                temp = key[:]
+                for idx in c:
                     temp[idx] = '-'
-                info_list[' '.join(temp)].append(score)
+                          
+                dic[' '.join(temp)].append(score)
     
-    for k in info_list.values():
-        k.sort()
-
-
-    #이분 탐색
+    for k in dic:
+        dic[k].sort()
+        
     for q in query:
-        s = q.replace("and", "")
-        s = s.split()
-        score = int(s[-1])
-        find = info_list[' '.join(s[:-1])]
-        
-        idx = bisect_left(find, score)
-
-        answer.append(len(find) - idx)
-        
+        q = q.replace(' and', '').split()
+        score = int(q[-1])
+        q = ' '.join(q[:-1])
+        if q in dic.keys():
+            id = bisect_left(dic[q], score)
+            answer.append(len(dic[q]) - id)
+        else:
+            answer.append(0)
+    
     return answer
