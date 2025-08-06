@@ -1,6 +1,5 @@
 import sys
 input = sys.stdin.readline
-from collections import defaultdict
 
 n, k = map(int, input().split())
 country = []
@@ -14,9 +13,7 @@ for _ in range(n):
 
 country.sort(key=lambda x: (-x[1], -x[2], -x[3]))
 
-answer = 0
-
-for i in range(1, n):
+for i in range(n):
     if country[i][1:] == find:
         print(i+1)
         break
