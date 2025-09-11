@@ -21,20 +21,18 @@ def solution(queue1, queue2):
             
         #q2에서 원소 pop해야함
         elif sum1 < sum2:
-            while sum2 > half:
-                q2 = queue2.popleft()
-                queue1.append(q2)
-                answer += 1
-                sum2 -= q2
-                sum1 += q2
+            q2 = queue2.popleft()
+            queue1.append(q2)
+            answer += 1
+            sum2 -= q2
+            sum1 += q2
         
         #q1에서 원소 pop해야함
         else:
-            while sum1 > half:
-                q1 = queue1.popleft()
-                queue2.append(q1)
-                answer += 1
-                sum1 -= q1
-                sum2 += q1
+            q1 = queue1.popleft()
+            queue2.append(q1)
+            answer += 1
+            sum1 -= q1
+            sum2 += q1
 
     return answer
