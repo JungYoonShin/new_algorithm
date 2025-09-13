@@ -1,42 +1,52 @@
-from heapq import heappop, heappush
-
+import heapq
 def solution(n, s, a, b, fares):
     answer = 0
     
     graph = [[] for _ in range(n+1)]
-    for fare in fares:
-        c, d, f = fare
-        graph[c].append((d, f))
-        graph[d].append((c, f))
     
-    def dijkstra(now):
-        nonlocal graph
+    for fare in fares:
+        x, y, z  = fare
+        graph[x].append((y, z))
+        graph[y].append((x, z))
+    
+
+    def djk(start):
+        q = []
+        heapq.heappush(q, (0, start))
         dist = [1e9] * (n+1)
-        
-        dist[now] = 0
-        
-        #우선순위 큐에 (거리 0, 첫 정점)만 먼저 넣는다.
-        q = [[0, now]]
-        
+        dist[start] = 0
+
         while q:
-            now_dist, x = heappop(q)
-            
-            if dist[x] < now_dist:
+            cost, u = heapq.heappop(q)
+
+            if dist[u] < cost:
                 continue
-            
-            for next_node, next_dist in graph[x]:
-                if dist[next_node] > now_dist + next_dist:
-                    dist[next_node] = now_dist + next_dist
-                    heappush(q, (now_dist + next_dist, next_node))
+
+            for v, w in graph[u]:
+                if dist[v] > dist[u] + w:
+                    dist[v] = dist[u] + w
+                    heapq.heappush(q, (dist[v], v))
+    
         return dist
     
+    #s번에서 i번까지 동승 그리고 i번에서 최소거리로 각자집까지 이동
+    min_cost = 1e9
+    dist = djk(s)
     
-    #특정 노드에서 시작해서 모든 정점으로의 이동거리 
-    D = [0] + [dijkstra(i) for i in range(1, n+1)]
+    #합승을 안하는게 이득일 수도
+    alone_a = dist[a]
+    alone_b = dist[b]
     
-    answer = 1e9
     for i in range(1, n+1):
-        answer = min(answer, D[s][i] + D[i][a] + D[i][b])
-                   
+        together = dist[i]
+        if dist[i] == 1e9:
+            continue
         
-    return answer
+        #i번에서 각자 집까지 이동(최소거리로)
+        start_i = djk(i)
+        dist_a = start_i[a]
+        dist_b = start_i[b]
+        
+        min_cost = min(together+dist_a+dist_b, min_cost, alone_a+alone_b)
+    
+    return min_cost
