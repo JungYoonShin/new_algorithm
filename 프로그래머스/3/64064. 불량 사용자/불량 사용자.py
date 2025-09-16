@@ -1,34 +1,30 @@
-from collections import defaultdict
+from itertools import permutations
 def solution(user_id, banned_id):
     answer = 0
     
-    ban = defaultdict(list)
-    for i in range(len(banned_id)):
-        for user in user_id:
-            flag = True
-            if len(user) == len(banned_id[i]):
-                for j in range(len(banned_id[i])):
-                    if banned_id[i][j] != '*':
-                        if user[j] != banned_id[i][j]:
-                            flag = False
-                            break
-            else:
-                flag = False
-                        
-            if flag:
-                ban[i].append(user)
+    user_combi = list(permutations(user_id, len(banned_id)))
     
-    result = set()
-    def dfs(idx, chosen):
-        if idx == len(banned_id):
-            result.add(frozenset(chosen))
-            return
+    def check(i, user):
+        if len(user) != len(banned_id[i]):
+            return False
         
-        for user in ban[idx]:
-            if user not in chosen:
-                chosen.append(user)
-                dfs(idx+1, chosen)
-                chosen.remove(user)
+        for j in range(len(user)):
+            if banned_id[i][j] == '*':
+                continue
+            if user[j] != banned_id[i][j]:
+                return False
+        return True
+            
+    result = set()
+    for user in user_combi:
+        possible = set()
+        for i in range(len(user)):
+            if check(i, user[i]):
+                possible.add(user[i])
+            else:
+                break
+        else:
+            if possible not in result:
+                result.add(frozenset(possible))
     
-    dfs(0, [])
     return len(result)
