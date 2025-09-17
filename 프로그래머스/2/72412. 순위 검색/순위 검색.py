@@ -1,36 +1,31 @@
 from collections import defaultdict
-from itertools import combinations
+from itertools import product
 from bisect import bisect_left
 
-def solution(information, query):
+def solution(infos, query):
     answer = []
-    dic = defaultdict(list)
+    db = defaultdict(list)
+    possible = list(product([0,1], repeat=4))
     
-    for info in information:
-        infos = info.split()
-        key = infos[:-1]
-        score = int(infos[-1])
-        
-        for i in range(5):
-            case = list(combinations([0,1,2,3], i))
-            for c in case:
-                temp = key[:]
-                for idx in c:
-                    temp[idx] = '-'
-                          
-                dic[' '.join(temp)].append(score)
+    for info in infos:
+        data = info.split()
+        for p in possible:
+            temp = data[:]
+            for i in range(4):
+                if p[i] == 1:
+                    temp[i] = '-'
+            key = " ".join(temp[:4])
+            db[key].append(int(data[4]))
+
+    for key in db:
+        db[key].sort()
     
-    for k in dic:
-        dic[k].sort()
-        
     for q in query:
-        q = q.replace(' and', '').split()
-        score = int(q[-1])
-        q = ' '.join(q[:-1])
-        if q in dic.keys():
-            id = bisect_left(dic[q], score)
-            answer.append(len(dic[q]) - id)
-        else:
-            answer.append(0)
+        q = q.replace(" and ", " ")
+        l, j, y, f, s = q.split()
+        key = " ".join([l, j, y, f])
+        score_list = db[key]
+        idx = bisect_left(score_list, int(s))
+        answer.append(len(score_list) - idx)
     
     return answer
