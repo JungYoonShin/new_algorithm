@@ -36,7 +36,7 @@ def spread(x, y):
 
 answer = -1
 for w in wall:
-    new_graph = copy.deepcopy(graph)
+    new_graph = [row[:] for row in graph]
     for i in range(3):
         x, y = w[i]
         new_graph[x][y] = 1
@@ -57,5 +57,3 @@ for w in wall:
     answer = max(cnt, answer)
 
 print(answer)
-
-
