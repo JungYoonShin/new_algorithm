@@ -1,45 +1,50 @@
 import heapq
-
 def solution(n, paths, gates, summits):
-    gate_set = set(gates)
+    answer = []
+    INF = 1e9
     summit_set = set(summits)
-
-    graph = [[] for _ in range(n + 1)]
-    for a, b, cost in paths:
+    gates_set = set(gates)
+    
+    graph = [[] for _ in range(n+1)]
+    for path in paths:
+        a, b, cost = path
         graph[a].append((b, cost))
         graph[b].append((a, cost))
-
-    def dijkstra():
-        dist = [1e9] * (n + 1)
+    
+    def djk(gate):
+        dist = [INF] * (n+1)
         q = []
         
-        for gate in gates:
-            dist[gate] = 0
-            heapq.heappush(q, (0, gate))
-
+        for g in gate:
+            heapq.heappush(q, (0, g))
+            dist[g] = 0
+            
         while q:
-            cost, v = heapq.heappop(q)
-
-            if dist[v] < cost or v in summit_set:
+            cost, now = heapq.heappop(q)
+            if dist[now] < cost or now in summit_set:
                 continue
-
-            for togo, w in graph[v]:
-
-                new_intensity = max(dist[v], w)
+                
+            for togo, distance in graph[now]:
+                if togo in gates_set:
+                    continue
+                new_intensity = max(dist[now], distance)
                 if new_intensity < dist[togo]:
                     dist[togo] = new_intensity
                     heapq.heappush(q, (dist[togo], togo))
-
+                    
         return dist
-
+    
+    dis = djk(gates)
     answer = [0, 1e9]  # [산봉우리 번호, intensity]
     
-    dis = dijkstra()
-    summits.sort()
     for summit in summits:
         if dis[summit] < answer[1]:
             answer = [summit, dis[summit]]
-        elif dis[summit] < answer[1] and summit <=answer[0] :
+        elif dis[summit] == answer[1] and summit < answer[0]:
             answer = [summit, dis[summit]]
-
+    
+    
+    
+    
+    
     return answer
