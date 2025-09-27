@@ -1,38 +1,34 @@
 def solution(m, n, board):
     answer = 0
-    board = [list(row) for row in board]
-
-    def delete(board, r, c):
-        col = []
-        
-        for i in range(c):
-            col_list = [board[j][i] for j in range(r) if board[j][i] != '-']
-            
-            for j in range(r-1, -1, -1):
-                if col_list:
-                    board[j][i] = col_list.pop()
-                else:
-                    board[j][i] = '*'
-        return board
-        
+    remove_set = set('*')
+    board = list(map(list, board))
     while True:
-        should_delete = set()
-
-        # 2x2 같은 블록 찾기
+        new_board = list(x[:] for x in board)
+        total_set = set()
+        
         for i in range(m-1):
             for j in range(n-1):
-                if board[i][j] not in ['-', '*'] and \
-                   board[i][j] == board[i+1][j] == board[i][j+1] == board[i+1][j+1]:
-                    should_delete.update({(i, j), (i+1, j), (i, j+1), (i+1, j+1)})
-
-        if not should_delete:
+                if board[i][j] == '':
+                    continue
+                #네개 값이 같음 터트려야 함 (터트릴 애들 *로 바꾸기)
+                if board[i][j] == board[i+1][j] == board[i][j+1] == board[i+1][j+1]:
+                    new_board[i][j], new_board[i+1][j], new_board[i][j+1], new_board[i+1][j+1] = '*', '*','*','*'
+                    total_set.update({(i, j), (i+1, j), (i, j+1), (i+1, j+1)})
+                    
+        if not total_set:
             break
-
-        for (x, y) in should_delete:
-            board[x][y] = '-'
-        answer += len(should_delete)
-
-        # 블록 내리기
-        board = delete(board, m, n)
+        
+        #터트릴 애들 확인끝났으면, 열마다 * 삭제하고 빈 부분은 빈 문자열 채우기
+        new_board = list(map(list, zip(*new_board))) # 행 <-> 열 변환
+        for i in range(n):
+            len_i = len(new_board[i])
+            new_board[i] = [x for x in new_board[i] if x not in remove_set]
+            while len(new_board[i]) < len_i:
+                new_board[i].insert(0, '')
+        
+        new_board = list(map(list, zip(*new_board))) # 다시 원상 복구
+        board = list(x[:] for x in new_board)
+        answer += len(total_set)
+        
 
     return answer
