@@ -1,31 +1,31 @@
-from collections import defaultdict
-from itertools import product
+import copy
 from bisect import bisect_left
-
+from itertools import combinations
+from collections import defaultdict
 def solution(infos, query):
     answer = []
-    db = defaultdict(list)
-    possible = list(product([0,1], repeat=4))
     
+    all_info = defaultdict(list)
     for info in infos:
-        data = info.split()
-        for p in possible:
-            temp = data[:]
-            for i in range(4):
-                if p[i] == 1:
-                    temp[i] = '-'
-            key = " ".join(temp[:4])
-            db[key].append(int(data[4]))
-
-    for key in db:
-        db[key].sort()
-    
+        q = info.split(" ")
+        for x in range(5):
+            #- 등장은 0부터 4번가능
+            cases = list(combinations([0, 1, 2, 3], x))
+            for case in cases:
+                temp_q = copy.deepcopy(q)
+                for c in case:
+                    temp_q[c] = '-'
+            
+                all_info[''.join(temp_q[0:4])].append(int(q[-1]))
+        
+    for info in all_info.keys():
+        all_info[info].sort()
+        
     for q in query:
-        q = q.replace(" and ", " ")
-        l, j, y, f, s = q.split()
-        key = " ".join([l, j, y, f])
-        score_list = db[key]
-        idx = bisect_left(score_list, int(s))
-        answer.append(len(score_list) - idx)
-    
+        q = q.replace(' and ' , '')
+        q = q.split(' ')
+        score = int(q[-1])
+        idx = bisect_left(all_info[q[0]], score)
+        answer.append(len(all_info[q[0]]) - idx)
+
     return answer
