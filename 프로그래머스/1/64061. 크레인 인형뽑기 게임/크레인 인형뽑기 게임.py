@@ -9,16 +9,19 @@ def solution(board, moves):
         while board[i] and board[i][-1] == 0:
             board[i].pop()
 
+            
     for move in moves:
-        col = board[move - 1]
-        if not col:
+        if not board[move-1]:
             continue
-
-        doll = col.pop()
-        if bowl and bowl[-1] == doll:
+        
+        bowl.append(board[move-1].pop())
+        
+        if len(bowl) == 1:
+            continue
+        
+        if bowl[-1] == bowl[-2]:
+            bowl.pop()
             bowl.pop()
             answer += 2
-        else:
-            bowl.append(doll)
             
     return answer
