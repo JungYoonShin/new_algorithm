@@ -14,7 +14,8 @@ def solution(coin, cards):
             available.append(remain.popleft())
             available.append(remain.popleft())
         else:
-            return 
+            return
+
         
         if len(get_card) >= 2:
             for c1 in get_card:
@@ -22,7 +23,7 @@ def solution(coin, cards):
                     get_card.remove(c1)
                     get_card.remove(n+1-c1)
                     play_round(get_card, remain, available, rounds+1, coins)
-                    return 
+                    return
         
         if len(get_card) > 0 and len(available) > 0 and coins > 0:
             for c1 in get_card:
@@ -30,7 +31,7 @@ def solution(coin, cards):
                     available.remove(n+1-c1)
                     get_card.remove(c1)
                     play_round(get_card, remain, available, rounds+1, coins-1)
-                    return 
+                    return
         
         if len(available) >= 2 and coins >= 2:
             for c1 in available:
@@ -38,8 +39,8 @@ def solution(coin, cards):
                     available.remove(n+1-c1)
                     available.remove(c1)
                     play_round(get_card, remain, available, rounds+1, coins-2)
-                    return 
-    
+                    return
+                    
     
     play_round(cards[0:n//3], deque(cards[n//3:]), [], 1, coin)
     
