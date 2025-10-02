@@ -6,6 +6,7 @@ def solution(alp, cop, problems):
     
     max_alp = max([x[0] for x in problems]) 
     max_cop = max([x[1] for x in problems]) 
+    
     alp = min(alp, max_alp)
     cop = min(cop, max_cop)
     dp = [[1e9 for _ in range(max_cop+1)] for _ in range(max_alp+1)]
@@ -15,9 +16,9 @@ def solution(alp, cop, problems):
         for j in range(cop, max_cop+1):
             # 공부하기
             if i+1 <= max_alp:
-                dp[i+1][j] = min(dp[i+1][j], dp[i][j] + 1)
+                dp[i+1][j] = min(dp[i+1][j], dp[i][j] + 1, dp[i+1][j-1] + 1)
             if j+1 <= max_cop:
-                dp[i][j+1] = min(dp[i][j+1], dp[i][j] + 1)
+                dp[i][j+1] = min(dp[i][j+1], dp[i][j] + 1, dp[i-1][j+1] + 1)
                 
             for problem in problems:
                 if problem[0] <= i and problem[1] <= j:
