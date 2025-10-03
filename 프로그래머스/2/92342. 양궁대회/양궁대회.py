@@ -1,46 +1,47 @@
-from itertools import product
-def solution(n, infos):
+def solution(n, info):
     answer = []
     
+    # a=b일 경우 어피치가 점수 가져감
+    # a=b=0이면 아무도 안가져감
+    # 라이언이 가장 큰 점수 차이로 우승할 수 있는 방법 return 
     
-    #무조건 지거나 비기는 경우에는 -1을 return한다.
-    #해당 과녁 점수를 먹거나 안 먹거나
-    
-    def dfs(arrow, ryan, apeach, idx):
-        
+    def dfs(idx, ryan, apeach, arrow):
         if idx == 11:
             if arrow > 0:
                 ryan[10] += arrow
-            ryan_score, apeach_score = 0, 0
+            apeach_score, ryan_score = 0, 0
             for i in range(11):
+                if apeach[i] == 0 and ryan[i] == 0:
+                    continue
                 if apeach[i] < ryan[i]:
                     ryan_score += (10-i)
-                elif apeach[i] > 0:
+                else:
                     apeach_score += (10-i)
-
             
-            if apeach_score < ryan_score:
+            if ryan_score > apeach_score:
                 answer.append([ryan_score-apeach_score, ryan[:]])
             
             if arrow > 0:
                 ryan[10] -= arrow
+                
             return
-                    
-        #해당 점수를 먹거나
+        
+        #해당 점수 먹거나
         need = apeach[idx] + 1
         if arrow >= need:
             ryan[idx] = need
-            dfs(arrow - need, ryan, apeach, idx+1)
+            dfs(idx+1, ryan, apeach, arrow-need)
             ryan[idx] = 0
-
+            
         
         #안 먹거나
-        dfs(arrow, ryan, apeach, idx+1)
+        dfs(idx+1, ryan, apeach, arrow)
     
-    dfs(n, [0]*11, infos, 0)
+    dfs(0, [0]*11, info, n)
+    
     if not answer:
         return [-1]
     else:
-        answer.sort(key = lambda x: (x[0], list(reversed(x[1]))), reverse= True)
+        answer.sort(key = lambda x: (x[0], x[1][::-1]), reverse=True)
     
     return answer[0][1]
