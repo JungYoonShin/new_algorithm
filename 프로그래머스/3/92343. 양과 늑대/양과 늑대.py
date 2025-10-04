@@ -1,20 +1,21 @@
-import copy
 def solution(info, edges):
     answer = -1e9
     
+    #양 <= 늑대 이면 안됨, 최대한 많은 수의 양을 모아서 돌아와야함
     n = len(info)
     graph = [[] for _ in range(n)]
-    for a, b in edges:
+    for edge in edges:
+        a, b = edge
         graph[a].append(b)
     
     def dfs(now, sheep, wolf, can_visit):
         nonlocal answer
         answer = max(answer, sheep)
 
-        if sheep <= wolf:
-            return
-        
         can_visit.extend(graph[now][:])
+        # if sheep <= wolf:
+        #     return
+
         for v in can_visit:
             s, w = sheep, wolf
             if info[v] == 1:
@@ -24,10 +25,11 @@ def solution(info, edges):
             if s <= w:
                 continue
 
-            next_visit = copy.deepcopy(can_visit)
+            next_visit = can_visit[:]
             next_visit.remove(v)
             dfs(v, s, w, next_visit)
 
-
+    
     dfs(0, 1, 0, [])
+    print(answer)
     return answer
