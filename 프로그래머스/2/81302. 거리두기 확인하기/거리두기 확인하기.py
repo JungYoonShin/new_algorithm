@@ -9,10 +9,10 @@ def solution(places):
         if depth >= 1:
             if board[x][y] == 'P':
                 answer[idx] = 0
+                return True
         if depth >= 2:
             return
             
-        
         for i in range(4):
             nx = x + dx[i]
             ny = y + dy[i]
@@ -20,7 +20,8 @@ def solution(places):
             if 0<=nx<n and 0<=ny<n:
                 if not visited[nx][ny] and board[nx][ny] != 'X':
                     visited[nx][ny] = True
-                    dfs(idx, nx, ny, depth+1, visited)
+                    if dfs(idx, nx, ny, depth+1, visited):
+                        return True
                     visited[nx][ny] = False
                     
     
