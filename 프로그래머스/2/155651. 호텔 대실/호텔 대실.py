@@ -1,27 +1,24 @@
 def solution(book_time):
     answer = 0
-    
-    rooms = []
-    
     book_time.sort()
-
+    status = []
     
-    for b in book_time:
-        s_hour, s_minute = map(int, b[0].split(":"))
-        e_hour, e_minute = map(int, b[1].split(":"))
+    for time in book_time:
+        start, end = time
+        end_hour, end_minute = map(int, end.split(":"))
+        end_total = end_hour * 60 + end_minute + 10
+        start_hour, start_minute = map(int, start.split(":"))
+        start_total = start_hour * 60 + start_minute
         
-        if len(rooms) == 0:
-            rooms.append([e_hour * 60 + e_minute + 10])
+        if not status:
+            status.append(end_total)
+        
         else:
-            new = False
-            for i in range(len(rooms)):
-                if rooms[i][-1] <= s_hour * 60 + s_minute:
-                    new = True
-                    rooms[i].append(e_hour * 60 + e_minute + 10)
+            for i, s in enumerate(status):
+                if s <= start_total:
+                    status[i] = end_total
                     break
-            if not new:
-                rooms.append([e_hour * 60 + e_minute + 10])
-                
-    print(rooms)
-    
-    return len(rooms)
+            else:
+                status.append(end_total)
+                    
+    return len(status)
