@@ -1,40 +1,34 @@
 def solution(numbers):
-    result = []
+    answer = []
     
-    def check(nodes):
-        if not nodes:
+    def is_binary(num):
+        mid = len(num) // 2
+        if len(num) == 1:
             return True
         
-        mid = len(nodes) // 2
-        if nodes[mid] == '0':
-            if '1' in nodes:
+        if num[mid] == '0':
+            if '1' in num[0:mid] or '1' in num[mid+1:]:
                 return False
-            return True
-            
-        return check(nodes[:mid]) and check(nodes[mid+1:])
-        
+                    
+        return is_binary(num[0:mid]) and is_binary(num[mid+1:])
     
     for number in numbers:
-        number = bin(number)[2:]
+        to_bin = bin(number)[2:]
         
-        if len(number) % 2 == 0:
-            number = '0' + number
-        
-        n = len(number)
-        
-        #포화이진트리 높이 구하기
-        answer = 1
-        height = 1
-        while answer < n:
-            answer += height
-            height *= 2
-        
-        #부족한만큼 앞을 0으로 채우기
-        while True:
-            if len(number) == answer:
-                break
-            number = '0' + number
-        
-        result.append(int(check(number)))
-            
-    return result
+        if len(to_bin) == 1:
+            answer.append(int(to_bin))
+
+        else:
+            i = 1
+            total = 1
+            while True:
+                i *= 2
+                total += i
+                if total >= len(to_bin):
+                    to_be = total
+                    break
+
+            to_bin = '0' * (to_be - len(to_bin)) + to_bin
+            answer.append(int(is_binary(to_bin)))
+    
+    return answer
