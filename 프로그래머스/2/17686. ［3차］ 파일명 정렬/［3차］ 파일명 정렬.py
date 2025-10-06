@@ -1,27 +1,21 @@
 def solution(files):
     answer = []
     
-    original_file = {}
-    after_file = []
-    
-    for idx, file in enumerate(files):
-        number_cnt, head_end = 0, -1
-        for i, f in enumerate(file):
-            if f.isdigit():
-                if head_end == -1:
-                    head_end = i-1
-                number_cnt += 1
-                number_end = i
-                
-            elif number_cnt!= 0: 
+    new = []
+    for file in files:
+        head, num, tail = '', '', ''
+        is_num = False
+        for i in range(len(file)):
+            if file[i].isdigit():
+                num += file[i]
+                is_num = True
+            elif not is_num:
+                head += file[i]
+            else:
+                tail += file[i:]
                 break
+                
+        new.append((head, num, tail))
         
-        head = file[0:head_end+1].lower()
-        number = file[head_end+1:number_end+1]
-        tail = file[number_end+1:]
-        
-        after_file.append([head, int(number), idx, file])
-    
-    after_file.sort(key = lambda x: (x[0], x[1], x[2]))
-    print(after_file)
-    return [x[3] for x in after_file]
+    new.sort(key=lambda x: (x[0].upper(), int(x[1])))
+    return [''.join(t) for t in new]
