@@ -1,10 +1,7 @@
 from collections import deque
 import copy
-import sys
-sys.setrecursionlimit(10**8)
-
-answer = ''
 def solution(n, m, x, y, r, c, k):
+    answer = ''
     
     x -=1 
     y -= 1
@@ -15,28 +12,31 @@ def solution(n, m, x, y, r, c, k):
     
     dx = [1, 0, 0, -1]
     dy = [0, -1, 1, 0]
-    def dfs(start_x, start_y, depth, move):
-        global answer
-        if depth == k:
-            if start_x == r and start_y == c:
-                return move
+    def bfs(start_x, start_y):
+        all_move = []
 
-        for i in range(4):
-            nx = start_x + dx[i]
-            ny = start_y + dy[i]
+        q = deque([(start_x, start_y, 0, "")])
+        
+        while q:
+            a, b, depth, move = q.popleft()
             
-            if 0 <= nx < n and 0 <= ny < m:
-                remain = k - (depth + 1)
-                dist = abs(nx - r) + abs(ny - c)
-                if dist > remain or (remain - dist) % 2 == 1:
-                    continue
-                                    
-                res = dfs(nx, ny, depth+1, move+str(i)) 
-                if res is not None:
-                    return res
+            if depth == k:
+                if a==r and b==c:
+                    move = move.replace('0', "d").replace('1', "l").replace('2', "r").replace('3', "u")
+                    return move
+            
+            for i in range(4):
+                nx = a + dx[i]
+                ny = b + dy[i]
+                
+                if 0<=nx<n and 0<=ny<m:
+                    if abs(nx - r) + abs(ny - c) > k - (depth + 1):
+                        continue
+                    q.append((nx, ny, depth+1, move+str(i)))
+                    break
     
-    mm = dfs(x, y, 0, "")
-    if mm is None:
+    result = bfs(x, y)
+    if not result:
         return "impossible"
-    mm = mm.replace('0', "d").replace('1', "l").replace('2', "r").replace('3', "u")
-    return mm
+    
+    return result
