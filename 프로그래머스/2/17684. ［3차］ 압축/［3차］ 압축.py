@@ -1,27 +1,24 @@
 def solution(msg):
     answer = []
-
-    dict = {}
+    index = {}
     
     for i in range(65, 91):
-        dict[chr(i)] = i-64
+        index[chr(i)] = i-64
     
     last = 27
-    
-    while msg:
-            
-        s = ''
-        for i in range(len(msg)):
-            if s + msg[i] in dict.keys():
-                s += msg[i]
-            else:
-                break
+    start = 0
+    while True:
+        for i in range(len(msg), start, -1):
+            if msg[start:i] in index:
+                answer.append(index[msg[start:i]])
                 
-        answer.append(dict[s])
-        if i < len(msg):
-            dict[s + msg[i]] = last
-            last += 1
-
-        msg = msg[len(s):]
-    
+                index[msg[start:i+1]] = last
+                last += 1
+                
+                start = i
+                break
+        
+        if start >= len(msg):
+            break
+        
     return answer
