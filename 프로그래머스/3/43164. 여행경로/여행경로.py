@@ -1,34 +1,49 @@
-from collections import defaultdict
+
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
 def solution(tickets):
-    answer = ["ICN"]
-    n = len(tickets)
-    graph = defaultdict(list)
-    for i, ticket in enumerate(tickets):
-        start, end = ticket
-        graph[start].append([end, i])
-    
-    for k in graph.keys():
-        graph[k].sort()
-        
-    visited = defaultdict(bool)
-    def dfs(now):
-        
-        if len(answer) == (n+1):
-            print(answer)
-            return answer
-        
-        if not graph[answer[-1]] and len(answer) != n+1:
-            return False
-        
-        for v in graph[now]:
-            if not visited[v[1]]:
-                visited[v[1]] = True
-                answer.append(v[0])
-                result = dfs(v[0])
-                if result:
-                    return result
-                visited[v[1]] = False
-                answer.pop()
-                    
-            
-    return dfs("ICN")
+
+    answer = []
+    tickets.sort()  # 티켓을 사전순으로 정렬
+
+    path = ["ICN"]  # 경로 저장 리스트
+    visited = [False] * len(tickets)
+
+
+    def dfs(start, path):
+        if len(path) == len(tickets) + 1:
+            answer.append(path)
+            return
+
+        for idx, (src, dst) in enumerate(tickets):
+            if src == start and not visited[idx]:
+                visited[idx] = True
+                dfs(dst, path+[dst])
+                visited[idx] = False
+
+    dfs("ICN", ["ICN"])
+    answer.sort()
+
+    return answer[0]
