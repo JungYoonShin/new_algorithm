@@ -1,37 +1,36 @@
-import sys
 from collections import deque
 
-input = sys.stdin.readline
-
 n, m = map(int, input().split())
-move = [list(map(int, input().split())) for _ in range(n+m)]
+jump = {}
 
-result = 0
-visited=[0]*101
+# 사다리 입력
+for _ in range(n):
+    a, b = map(int, input().split())
+    jump[a] = b
 
-def bfs(start, cnt):
-    q = deque([(start, cnt)])
-    visited[start] = 1
+# 뱀 입력
+for _ in range(m):
+    a, b = map(int, input().split())
+    jump[a] = b
 
-    while q:
-        current, turn = q.popleft()
+visited = [False] * 101
+q = deque([(1, 0)])  # (현재 위치, 이동 횟수)
 
-        for dice in range(1, 7):
-            next_pos = current + dice
-            if next_pos > 100:
-                continue
+while q:
+    now, cnt = q.popleft()
 
-            for a, b in move:
-                if next_pos == a:
-                    next_pos = b
+    if now == 100:
+        print(cnt)
+        break
 
-            if not visited[next_pos]:
-                if next_pos == 100:
-                    print(turn+ 1)
-                    exit()
+    for dice in range(1, 7):
+        next_pos = now + dice
+        if next_pos > 100:
+            continue
 
-                visited[next_pos] = True
-                q.append((next_pos, turn + 1))
+        if next_pos in jump:  # 사다리 또는 뱀
+            next_pos = jump[next_pos]
 
-
-bfs(1, 0)
+        if not visited[next_pos]:
+            visited[next_pos] = True
+            q.append((next_pos, cnt + 1))
