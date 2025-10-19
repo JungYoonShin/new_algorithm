@@ -6,7 +6,7 @@ board = [list(map(int, input().split())) for _ in range(n)]
 
 dx = [-1, 1, 0, 0]
 dy = [0, 0, -1, 1]
-
+# 외부공기 표시
 def dfs(x, y, visited):
     visited[x][y] = True
     for i in range(4):
@@ -32,21 +32,20 @@ def melt():
                     if 0 <= nx < n and 0 <= ny < m and board[nx][ny] == 2:
                         cnt += 1
                 if cnt >= 2:
-                    new_board[i][j] = 0  # 치즈 녹음
+                    new_board[i][j] = 0
                     melted = True
     board = new_board
     return melted
 
 time = 0
 while True:
-    # 외부 공기 갱신
+    # 외부공기 새로 갱신
     visited = [[False]*m for _ in range(n)]
     dfs(0, 0, visited)
 
     # 치즈 녹이기
     if not melt():
         break
-
     time += 1
 
 print(time)
