@@ -1,24 +1,22 @@
 def solution(msg):
     answer = []
-    index = {}
+
+    dictionary = {}
     
-    for i in range(65, 91):
-        index[chr(i)] = i-64
+    for i in range(26):
+        dictionary[chr(65+i)] = i+1
     
-    last = 27
-    start = 0
-    while True:
-        for i in range(len(msg), start, -1):
-            if msg[start:i] in index:
-                answer.append(index[msg[start:i]])
-                
-                index[msg[start:i+1]] = last
-                last += 1
-                
-                start = i
+    idx = 27
+    while msg:
+        for i, s in enumerate(msg):
+            if msg[0:i+1] in dictionary:
+                k = i+1
+            else:
                 break
-        
-        if start >= len(msg):
-            break
-        
+                
+        answer.append(dictionary[msg[0:k]])
+        dictionary[msg[0:k+1]] = idx
+        idx += 1
+        msg = msg[k:]
+
     return answer
