@@ -1,39 +1,38 @@
 def solution(places):
-    answer = [1] * 5
-    n = 5
-    
+    answer = []
     dx = [-1, 1, 0, 0]
     dy = [0, 0, -1, 1]
     
-    def dfs(idx, x, y, depth, visited):
-        if depth >= 1:
-            if board[x][y] == 'P':
-                answer[idx] = 0
-                return True
-        if depth >= 2:
-            return
-            
+    #응시자들끼리는 맨해튼 거리가 2이하면 안된다.
+    def dfs(place, x, y, depth):
+        if place[x][y] == 'P' and 1<= depth <= 2:
+            return True
+        
         for i in range(4):
             nx = x + dx[i]
             ny = y + dy[i]
             
-            if 0<=nx<n and 0<=ny<n:
-                if not visited[nx][ny] and board[nx][ny] != 'X':
+            if 0<=nx<5 and 0<=ny<5:
+                if not visited[nx][ny] and place[nx][ny] != 'X':
                     visited[nx][ny] = True
-                    if dfs(idx, nx, ny, depth+1, visited):
+                    if dfs(place, nx, ny, depth+1):
                         return True
                     visited[nx][ny] = False
                     
-    
-    for idx, place in enumerate(places):
-        board = list(map(list, place))
-        for i in range(n):
-            for j in range(n):
-                if board[i][j] == 'P':
-                    visited = [[False for _ in range(n)] for _ in range(n)]
+    for place in places:
+        flag = False
+        for i in range(5):
+            for j in range(5):
+                if place[i][j] == 'P':
+                    visited = [[False for _ in range(5)] for _ in range(5)]
                     visited[i][j] = True
-                    dfs(idx, i, j, 0, visited)
-        # print(answer)
-        # print()
-    
+                    #거리두기를 지키지 않고 있는 경우
+                    if dfs(place, i, j, 0):
+                        answer.append(0)
+                        flag = True
+                        break
+            if flag:
+                break
+        if not flag:
+            answer.append(1)
     return answer
