@@ -1,42 +1,36 @@
 from collections import deque
-import copy
 def solution(n, m, x, y, r, c, k):
     answer = ''
     
-    x -=1 
+    dir = [[1, 0, 'd'], [0, -1, 'l'], [0, 1, 'r'], [-1, 0, 'u']] #d, l, r, u 순으로 탐색
+    
+    x -= 1
     y -= 1
     r -= 1
     c -= 1
-    
-    #이동거리 총 k여야함, 그리고 같은 격자 2번 이상 방문 가능, 모든 경로중 문자열 사전 순으로 가장 빠른 경로
-    
-    dx = [1, 0, 0, -1]
-    dy = [0, -1, 1, 0]
-    def bfs(start_x, start_y):
-        all_move = []
-
-        q = deque([(start_x, start_y, 0, "")])
+    def bfs(a, b):
+        q = deque([(a, b, 0, [])])
         
         while q:
-            a, b, depth, move = q.popleft()
+            x, y, depth, move = q.popleft()
             
-            if depth == k:
-                if a==r and b==c:
-                    move = move.replace('0', "d").replace('1', "l").replace('2', "r").replace('3', "u")
-                    return move
-            
+            if depth == k and (x == r and y == c):
+                return move
+    
             for i in range(4):
-                nx = a + dx[i]
-                ny = b + dy[i]
+                nx = x + dir[i][0]
+                ny = y + dir[i][1]
                 
                 if 0<=nx<n and 0<=ny<m:
-                    if abs(nx - r) + abs(ny - c) > k - (depth + 1):
+                    if abs(nx-r) + abs(ny-c) > k-(depth+1):
                         continue
-                    q.append((nx, ny, depth+1, move+str(i)))
+                    q.append((nx, ny, depth+1, move+[dir[i][2]]))
                     break
-    
-    result = bfs(x, y)
-    if not result:
+
+            
+                
+    answer = bfs(x, y)
+    if answer == None:
         return "impossible"
-    
-    return result
+    else:
+        return ''.join(answer)
