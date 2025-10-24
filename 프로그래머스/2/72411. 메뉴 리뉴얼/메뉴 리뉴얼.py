@@ -1,16 +1,29 @@
 from itertools import combinations
-from collections import Counter
+from collections import defaultdict
 def solution(orders, course):
     answer = []
     
-    for k in course:
-        status = []
+    for n in course:
+        status = defaultdict(int)
         for order in orders:
-            for li in list(combinations(order, k)):
-                status.append(''.join(sorted(li)))
+            dishes = list(combinations(sorted(order), n))
+            dishes.sort()
+            for dish in dishes:
+                status[''.join(dish)] += 1
         
-        cnt = Counter(status).most_common()
-        for menu, count in cnt:
-            if count >= 2 and count == cnt[0][1]:
-                answer.append(menu)
-    return sorted(answer)
+        cnt = []
+        for k in status.keys():
+            cnt.append([k, status[k]])
+        cnt.sort(key = lambda x: -x[1])
+        if cnt:
+            max_cnt = cnt[0][1]
+        if max_cnt >= 2:
+            
+            for c in cnt:
+                if c[1] == max_cnt:
+                    answer.append(c[0])
+                else:
+                    break
+    answer.sort()
+    # print(answer)
+    return answer
