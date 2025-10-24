@@ -1,34 +1,53 @@
+
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
 def solution(m, n, board):
+    board.reverse()
+    field = [list(cols) for cols in zip(*board)]
     answer = 0
-    remove_set = set('*')
-    board = list(map(list, board))
+
     while True:
-        new_board = list(x[:] for x in board)
-        total_set = set()
-        
-        for i in range(m-1):
-            for j in range(n-1):
-                if board[i][j] == '':
-                    continue
-                #네개 값이 같음 터트려야 함 (터트릴 애들 *로 바꾸기)
-                if board[i][j] == board[i+1][j] == board[i][j+1] == board[i+1][j+1]:
-                    new_board[i][j], new_board[i+1][j], new_board[i][j+1], new_board[i+1][j+1] = '*', '*','*','*'
-                    total_set.update({(i, j), (i+1, j), (i, j+1), (i+1, j+1)})
-                    
-        if not total_set:
+        bomb = set()
+        for row in range(n - 1):
+            for col in range(m - 1):
+                try:
+                    if field[row][col] == field[row + 1][col] == field[row][col + 1] == field[row + 1][col + 1]:
+                        bomb.update({(row, col), (row + 1, col), (row, col + 1), (row + 1, col + 1)})
+                except:
+                    break
+
+        if not len(bomb):
             break
-        
-        #터트릴 애들 확인끝났으면, 열마다 * 삭제하고 빈 부분은 빈 문자열 채우기
-        new_board = list(map(list, zip(*new_board))) # 행 <-> 열 변환
-        for i in range(n):
-            len_i = len(new_board[i])
-            new_board[i] = [x for x in new_board[i] if x not in remove_set]
-            while len(new_board[i]) < len_i:
-                new_board[i].insert(0, '')
-        
-        new_board = list(map(list, zip(*new_board))) # 다시 원상 복구
-        board = list(x[:] for x in new_board)
-        answer += len(total_set)
-        
+
+        for r, c in bomb:
+            field[r][c] = ''
+            answer += 1
+
+        for row in range(n):
+            field[row] = list(''.join(field[row]))
 
     return answer
