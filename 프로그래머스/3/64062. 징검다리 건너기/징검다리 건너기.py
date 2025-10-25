@@ -1,28 +1,25 @@
-import copy
 def solution(stones, k):
-    answer = 0
+    answer = -1e9
+    start = 1
+    end = 200000000
+    n = len(stones)
     
-    #0이 연달아 나오는 구간의 길이가 k이상이면 안된다.
-    left = 1
-    right = 200000000
-    while left <= right:
-        mid = (left+right) // 2
-        temp = stones.copy()
+    while start<=end:
+        friend = (start+end)//2
+        # print(friend, new_stone)
         cnt = 0
-        for stone in temp:
-            stone -= mid
-            if stone <= 0:
+        for stone in stones:
+            if stone - friend <= 0:
                 cnt += 1
+                if cnt >= k:
+                    break
             else:
                 cnt = 0
-            
-            if cnt >= k:
-                break
-        
-        if cnt >= k:
-            right = mid - 1
+                    
+        if cnt <= k-1:
+            answer = max(answer, friend)
+            start = friend + 1
         else:
-            left = mid + 1
-            answer = mid
-
+            end = friend-1
+            
     return answer+1
