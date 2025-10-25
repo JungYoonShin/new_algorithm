@@ -1,35 +1,28 @@
 def solution(info, edges):
-    answer = -1e9
-    
-    #양 <= 늑대 이면 안됨, 최대한 많은 수의 양을 모아서 돌아와야함
+    #각 노드를 방문하면서 모을 수 있는 양은 최대 몇 마리
+    answer = 1
     n = len(info)
-    graph = [[] for _ in range(n)]
-    for edge in edges:
-        a, b = edge
-        graph[a].append(b)
     
-    def dfs(now, sheep, wolf, can_visit):
+    
+    def dfs(now, wolf, sheep):
         nonlocal answer
-        answer = max(answer, sheep)
-
-        can_visit.extend(graph[now][:])
-        # if sheep <= wolf:
-        #     return
-
-        for v in can_visit:
-            s, w = sheep, wolf
-            if info[v] == 1:
-                w += 1
-            else:
-                s += 1
-            if s <= w:
-                continue
-
-            next_visit = can_visit[:]
-            next_visit.remove(v)
-            dfs(v, s, w, next_visit)
-
+        if sheep <= wolf:
+            return
+        else:
+            answer = max(answer, sheep)
+        
+        for v, e in edges:
+            if visited[v] and not visited[e]:
+                #다음 방문할 곳이 늑대라면
+                visited[e] = True
+                if info[e] == 1:
+                    dfs(e, wolf+1, sheep)
+                else:
+                    dfs(e, wolf, sheep+1)
+                visited[e] = False
     
-    dfs(0, 1, 0, [])
-    print(answer)
+    visited = [False] * n
+    visited[0] = True
+    dfs(0, 0, 1)
+    # print(answer)
     return answer
