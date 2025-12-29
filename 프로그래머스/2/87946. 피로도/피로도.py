@@ -1,21 +1,26 @@
+answer = -1
 def solution(k, dungeons):
-    answer = -1
-    n = len(dungeons)
-    visited = [False] * n
+    cnt = len(dungeons)
     
-    def explore(visit, left):   
-        nonlocal answer
-        for i in range(n):
-            if not visited[i] and left >= dungeons[i][0]:
-                visited[i] = True
-                visit.append(i)
-                explore(visit, left-dungeons[i][1])
-                visit.pop()
-                visited[i] = False
-        
-        if answer < len(visit):
-            answer = len(visit)
+    visited = [False] * len(dungeons)
     
+    def explore(get, left):
+        global answer
+        for v, dun in enumerate(dungeons):
+            if not visited[v] and left >= dun[0]:
+                visited[v] = True
+                get.append(v)
+                left -= dun[1]
+                explore(get, left)
+                visited[v] = False
+                get.pop()
+                left += dun[1]
+                
+        if answer < len(get):
+            answer = len(get)
+            return
+            
     explore([], k)
-        
+    print(answer)
+    
     return answer
