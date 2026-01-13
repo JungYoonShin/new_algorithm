@@ -1,30 +1,43 @@
 from itertools import combinations
-from collections import defaultdict
 def solution(relation):
     answer = []
-    n = len(relation)
+    key = set()
+    column = len(relation[0])
+    all = []
     
-    for i in range(1, len(relation[0])+1):
-        combis = list(combinations(range(len(relation[0])), i))
-        
-        for combi in combis:
-            distinct = set()
-            for re in relation:
-                r = ''
-                for c in combi:
-                    r += re[c]
-                distinct.add(r)
+    #후보키가 1개일때부터 8개일때까지 구한다.
+    for i in range(1, column+1):
+        all.append(list(combinations(list(range(column)), i)))
+    
+    # if set([0, 1]).issubset((0, 1, 2)):
+    #     print(3)
+    
+    for a in all:
+        for possible in a:
+            appear = set()
+            for idx, tuple in enumerate(relation):
+                s = ''
+                for p in possible:
+                    s += relation[idx][p]
                 
-            #유일성 만족
-            if len(distinct) == n:
-                answer.append(combi)
+                appear.add(s)
+            
+            if len(appear) == len(relation):
+                key.add(possible)
     
-    result = set()
-    for a in answer:
-        for b in answer:
-            if set(a) != set(b) and set(a).issubset(set(b)):
-                result.add(b)
+    key = list(key)
+    key.sort(key = lambda x: len(x))
     
-    # print(set(answer), result)
-    # print(set(answer) - result)
-    return len(set(answer) - result)
+    answer.append(key[0])
+    print(key)
+    print(answer)
+    
+    for k in key:
+        for a in answer:
+            if set(a).issubset(set(k)):
+                break
+        else:
+            answer.append(k)
+            
+    
+    return len(answer)
