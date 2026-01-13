@@ -1,43 +1,25 @@
 from itertools import combinations
 def solution(relation):
+    answer = 0
+    n = len(relation[0]) #컬럼 개수
     answer = []
-    key = set()
-    column = len(relation[0])
-    all = []
     
-    #후보키가 1개일때부터 8개일때까지 구한다.
-    for i in range(1, column+1):
-        all.append(list(combinations(list(range(column)), i)))
-    
-    # if set([0, 1]).issubset((0, 1, 2)):
-    #     print(3)
-    
-    for a in all:
-        for possible in a:
-            appear = set()
-            for idx, tuple in enumerate(relation):
+    #후보키가 될 수 있는 크기(1 ~ 컬럼개수)
+    for i in range(1, n+1):
+        for possible in list(combinations(list(range(n)), i)):
+            #최소성을 만족하기 위한 조건
+            if any(set(a).issubset(possible) for a in answer):
+                continue
+            
+            student = set()
+            for row in relation:
                 s = ''
                 for p in possible:
-                    s += relation[idx][p]
+                    s += row[p]
                 
-                appear.add(s)
+                student.add(s)
             
-            if len(appear) == len(relation):
-                key.add(possible)
-    
-    key = list(key)
-    key.sort(key = lambda x: len(x))
-    
-    answer.append(key[0])
-    print(key)
-    print(answer)
-    
-    for k in key:
-        for a in answer:
-            if set(a).issubset(set(k)):
-                break
-        else:
-            answer.append(k)
+            if len(student) == len(relation):
+                answer.append(possible)
             
-    
     return len(answer)
