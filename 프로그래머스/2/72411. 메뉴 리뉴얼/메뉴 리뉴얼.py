@@ -3,27 +3,28 @@ from collections import defaultdict
 def solution(orders, course):
     answer = []
     
-    for n in course:
-        status = defaultdict(int)
-        for order in orders:
-            dishes = list(combinations(sorted(order), n))
-            dishes.sort()
-            for dish in dishes:
-                status[''.join(dish)] += 1
+    appear = defaultdict(int)
+    #각각의 코스 종류에 대해서 조합 구하기
+    for order in orders:
+        for c in course:
+            combis = list(combinations(sorted(order), c))
         
-        cnt = []
-        for k in status.keys():
-            cnt.append([k, status[k]])
-        cnt.sort(key = lambda x: -x[1])
-        if cnt:
-            max_cnt = cnt[0][1]
-        if max_cnt >= 2:
-            
-            for c in cnt:
-                if c[1] == max_cnt:
-                    answer.append(c[0])
-                else:
-                    break
-    answer.sort()
-    # print(answer)
-    return answer
+            for combi in combis:
+                appear[combi] += 1
+    
+    result = [[] for _ in range(11)]
+    for k in appear.keys():
+        result[len(k)].append([k, appear[k]])
+
+        
+    for c in course:
+        result[c].sort(key = lambda x: -x[1])
+        if result[c] and result[c][0][1] > 1:
+            max_appear = result[c][0][1]
+
+        for a in result[c]:
+            if a[1] == max_appear:
+                answer.append(''.join(a[0]))
+    
+    
+    return sorted(answer)
