@@ -1,25 +1,26 @@
-import sys
-from collections import defaultdict
-input = sys.stdin.readline
-
 p, m = map(int, input().split())
 player = [list(input().split()) for _ in range(p)]
-rooms = []
 
-for l, n in player:
-    l = int(l)
+player_dict = {}
+for level, name in player:
+    player_dict[name] = int(level)
+
+rooms = []
+for level, name in player:
+    level = int(level)
+
     for room in rooms:
-        level = room[0][0]
-        if len(room) < m and level-10 <= l <= level+10:
-            room.append((l, n))
+        if len(room[1]) < m and room[0] - 10 <= level <= room[0] + 10:
+            room[1].append(name)
             break
     else:
-        rooms.append([(l, n)])
+        rooms.append([level, [name]])
+
 for room in rooms:
-    if len(room) == m:
+    if len(room[1]) == m:
         print("Started!")
     else:
         print("Waiting!")
-    room.sort(key=lambda x: x[1])
-    for l, n in room:
-        print(l, n)
+
+    for n in sorted(room[1]):
+        print(player_dict[n], n)
