@@ -1,15 +1,7 @@
-#가로 m, 세로 n, 가장 테두리는 모두 막혀 있음
-#게임 목표는 빨간 구슬을 구멍으로 빼내기, 파란 구슬이 들어가면 안됨
-#두 구슬 동시에 같은 칸 불가, 빨간 공만 빼내야함
-#더 이상 구슬이 움직이지 않을 때까지 기울임
+#백준
 
 from collections import deque
-
 n, m = map(int, input().split())
-
-dx = [-1, 1, 0, 0]
-dy = [0, 0, -1, 1]
-
 graph = [list(input().rstrip()) for _ in range(n)]
 
 for i in range(n):
@@ -19,58 +11,58 @@ for i in range(n):
         if graph[i][j] == 'B':
             bx, by = i, j
 
+q = deque([(rx, ry, bx, by, 1)])
 
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
+visited = set()
 
-def move(x, y, d):
-    move = 0
+def moves(x, y, d):
+    cnt = 0
     while True:
-        nx = x + dx[d]
-        ny = y + dy[d]
+        cnt += 1
+        nx, ny = x + dx[d], y + dy[d]
+        if 0 <= nx < n and 0 <= ny < m:   # 여기 m은 전체 열 크기
+            if graph[nx][ny] == '#':
+                return x, y, cnt-1
+            x, y = nx, ny
+            if graph[nx][ny] == 'O':
+                return x, y, cnt
 
-        if graph[nx][ny] == '#':
-            return [x, y, move, False]
 
-        move += 1
-        if graph[nx][ny] == 'O':
-            return [nx, ny, move, True]
-        x, y = nx, ny
+while q:
+    r_x, r_y, b_x, b_y, move = q.popleft()
 
-answer = False
+    if move > 10:
+        print(-1)
+        exit()
 
-def game():
-    global answer
-    q = deque([(rx, ry, bx, by,0)])
-    visited = set()
-    visited.add((rx, ry, bx, by))
+    for d in range(4):
 
-    while q:
-        crx, cry, cbx, cby, cnt = q.popleft()
+        nrx, nry, move_r = moves(r_x, r_y, d)
+        nbx, nby, move_b = moves(b_x, b_y, d)
 
-        if cnt >= 10:
+        if graph[nbx][nby] == 'O':
             continue
 
-        for i in range(4):
-            nrx, nry, move_r, flagR = move(crx, cry, i)
-            nbx, nby, move_b, flagB = move(cbx, cby, i)
+        if graph[nrx][nry] == 'O':
+            print(move)
+            exit()
 
-            if flagB:
-                continue
+        if (nrx, nry) == (nbx, nby):
+            if move_r < move_b:
+                nbx -= dx[d]
+                nby -= dy[d]
+            else:
+                nrx -= dx[d]
+                nry -= dy[d]
 
-            if flagR:
-                return cnt+1
+        if (nrx, nry, nbx, nby) not in visited:
+            visited.add((nrx, nry, nbx, nby))
+            q.append((nrx, nry, nbx, nby, move+1))
 
-            if nrx == nbx and nry == nby:
-                if move_r > move_b:
-                    nrx -= dx[i]
-                    nry -= dy[i]
-                else:
-                    nbx -= dx[i]
-                    nby -= dy[i]
+print(-1)
 
-            if (nrx, nry, nbx, nby) not in visited:
-                visited.add((nrx, nry, nbx, nby))
-                q.append((nrx, nry, nbx, nby, cnt + 1))
 
-    return -1
 
-print(game())
+
