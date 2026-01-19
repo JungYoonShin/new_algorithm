@@ -1,38 +1,40 @@
 from collections import deque
-
 def solution(queue1, queue2):
-    answer = 0
+    answer = -2
+    
+    sum_1 = sum(queue1)
+    sum_2 = sum(queue2)
     
     queue1 = deque(queue1)
     queue2 = deque(queue2)
-    
-    sum1 = sum(queue1)
-    sum2 = sum(queue2)
-    n = len(queue1)
-    half = (sum1+sum2) // 2
-    
+    cnt = 0
     while True:
-        if sum1 == sum2:
+        if sum_1 == sum_2:
             break
         
-        if answer >= 3*n:
+        if sum_1 < sum_2:
+            top = queue2[0]
+            queue2.popleft()
+            queue1.append(top)
+            sum_1 += top
+            sum_2 -= top
+        
+        elif sum_1 > sum_2:
+            top = queue1[0]
+            queue1.popleft()
+            queue2.append(top)
+            sum_2 += top
+            sum_1 -= top
+            
+            
+        cnt += 1
+        
+        if cnt > (len(queue1) + len(queue2)) * 2:
             answer = -1
             break
-            
-        #q2에서 원소 pop해야함
-        elif sum1 < sum2:
-            q2 = queue2.popleft()
-            queue1.append(q2)
-            answer += 1
-            sum2 -= q2
-            sum1 += q2
-        
-        #q1에서 원소 pop해야함
-        else:
-            q1 = queue1.popleft()
-            queue2.append(q1)
-            answer += 1
-            sum1 -= q1
-            sum2 += q1
-
-    return answer
+    
+    if answer == -1:
+        return -1
+    else:
+        return cnt
+    
