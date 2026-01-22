@@ -1,69 +1,72 @@
-# 백준 12100 (네 코드 스타일 최대한 유지해서 "고치기만" 한 버전)
-
+#블록은 상하좌우로 이동이 가능하며, 같은 숫자를 가진 두 블록이 충돌하면 하나의 블록으로 합쳐짐
+#이미 합쳐진 블록은 또 다른 블록과 합쳐질 수 없다.
+#이동하려는 쪽의 칸이 먼저 합쳐진다.
+#최소 5번 이동해서 만들 수 있는 가장 큰 블록의 값
 import sys
 input = sys.stdin.readline
 
-dx = [-1, 1, 0, 0]   # 0:위 1:아래 2:왼 3:오
-dy = [0, 0, -1, 1]
-
 n = int(input())
 graph = [list(map(int, input().split())) for _ in range(n)]
-ans = 0
 
-def move_one(board, d):
-    # d 방향으로 한 번 이동한 새 보드 반환
-    new = [row[:] for row in board]
-    merged = [[False]*n for _ in range(n)]
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
 
-    if d == 0:  # 위
-        rng_i = range(1, n)
-        rng_j = range(n)
-    elif d == 1:  # 아래
-        rng_i = range(n-2, -1, -1)
-        rng_j = range(n)
-    elif d == 2:  # 왼
-        rng_i = range(n)
-        rng_j = range(1, n)
-    else:  # 오른
-        rng_i = range(n)
-        rng_j = range(n-2, -1, -1)
+def move(d, graph):
+    merge = [[False] * n for _ in range(n)]
 
-    for i in rng_i:
-        for j in rng_j:
-            if new[i][j] == 0:
+    # 충돌 감지해서 합치기
+    if d == 0:
+        a = range(1, n)
+        b = range(n)
+
+    elif d == 1:
+        a = range(n-2, -1, -1)
+        b = range(n)
+
+    elif d == 2:
+        a = range(n)
+        b = range(1, n)
+    else:
+        a = range(n)
+        b = range(n-2, -1, -1)
+
+    for i in a:
+        for j in b:
+            if graph[i][j] == 0:
                 continue
 
             x, y = i, j
             while True:
                 nx, ny = x + dx[d], y + dy[d]
-                if not (0 <= nx < n and 0 <= ny < n):
-                    break
 
-                if new[nx][ny] == 0:
-                    new[nx][ny] = new[x][y]
-                    new[x][y] = 0
-                    x, y = nx, ny
+                if 0<=nx<n and 0<=ny<n:
+                    if graph[nx][ny] == 0:
+                        graph[nx][ny] = graph[x][y]
+                        graph[x][y] = 0
+                        x, y = nx, ny
+
+                    else:
+                        if graph[nx][ny] == graph[x][y] and not merge[nx][ny]:
+                            graph[nx][ny] *= 2
+                            graph[x][y] = 0
+                            merge[nx][ny] = True
+                        break
                 else:
-                    if new[nx][ny] == new[x][y] and not merged[nx][ny]:
-                        new[nx][ny] *= 2
-                        new[x][y] = 0
-                        merged[nx][ny] = True
                     break
+    return graph
 
-    return new
-
-def move(tries):
-    global graph, ans
-
-    ans = max(ans, max(map(max, graph)))
-    if tries == 5:
+answer = 0
+def tries(cnt, g):
+    global answer
+    if cnt == 5:
+        answer = max(answer, max(map(max, g)))
         return
-
-    original = [row[:] for row in graph]
+    
     for d in range(4):
-        graph = move_one(original, d)
-        move(tries + 1)
-    graph = original
+        new = [row[:] for row in g]
+        moved = move(d, new)
+        tries(cnt+1, moved)
 
-move(0)
-print(ans)
+tries(0, graph)
+print(answer)
+
