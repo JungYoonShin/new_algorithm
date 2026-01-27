@@ -45,8 +45,6 @@ result = -1e9
 for combi in answer:
     new = [row[:] for row in graph]
     for idx in combi:
-        if new[idx // m][idx % m] != 0:
-            break
         new[idx // m][idx % m] = 1
 
     bfs()
