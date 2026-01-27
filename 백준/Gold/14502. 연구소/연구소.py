@@ -1,59 +1,61 @@
-import sys
-from itertools import combinations
-import copy
+#바이러스는 상하좌우로 퍼져나간다. 벽을 꼭 3개를 세워야 한다.
+#0 -> 빈칸, 1 -> 벽, 2 -> 바이러스
+#얻을 수 있는 안전 영역 크기의 최댓값
 
-input = sys.stdin.readline
-
-n, m = map(int, input().split()) #n이 세로, 가로 m
+n, m = map(int, input().split())
 graph = [list(map(int, input().split())) for _ in range(n)]
-
-
-
-empty = []
-
-#벽을 세워야 함 ..(3개)
-for i in range(n):
-    for j in range(m):
-        if graph[i][j] == 0:
-            empty.append((i, j))
-
-#3개 벽세우는 조합 구하기
-wall = list(combinations(empty, 3))
-
 dx = [-1, 1, 0, 0]
 dy = [0, 0, -1, 1]
-def spread(x, y):
-    visited[x][y] = True
 
-    for i in range(4):
-        nx = x + dx[i]
-        ny = y + dy[i]
-
-        if 0<=nx<n and 0<=ny<m and not visited[nx][ny]:
-            if new_graph[nx][ny] == 0:
-                new_graph[nx][ny] = 2
-                spread(nx, ny)
-
-answer = -1
-for w in wall:
-    new_graph = [row[:] for row in graph]
-    for i in range(3):
-        x, y = w[i]
-        new_graph[x][y] = 1
-
-    #바이러스 퍼트리기
-    visited = [[False for _ in range(m)] for _ in range(n)]
+answer = []
+from collections import deque
+def bfs():
+    q = deque([])
     for i in range(n):
         for j in range(m):
-            if new_graph[i][j] == 2 and not visited[i][j]:
-                spread(i, j)
+            if new[i][j] == 2:
+                q.append([i, j])
+                new[i][j] = 3
 
-    #0인 곳 세기
-    cnt = 0
+    while q:
+        x, y = q.popleft()
+        for d in range(4):
+            nx, ny = x + dx[d], y + dy[d]
+            if 0<=nx<n and 0<=ny<m:
+                if new[nx][ny] == 0:
+                    new[nx][ny] = 2
+                    q.append([nx, ny])
+
+
+# 조합 구하기(라이브러리 사용안하고 구현해보기)
+def find_combi(now, combi):
+    if len(combi) == 3:
+        answer.append(combi[:])
+        return
+
+    for i in range(now, n*m):
+        if graph[i//m][i%m] == 0:
+            combi.append(i)
+            find_combi(i+1, combi)
+            combi.pop()
+
+find_combi(0, [])
+
+result = -1e9
+for combi in answer:
+    new = [row[:] for row in graph]
+    for idx in combi:
+        if new[idx // m][idx % m] != 0:
+            break
+        new[idx // m][idx % m] = 1
+
+    bfs()
+    sum = 0
     for i in range(n):
         for j in range(m):
-            if new_graph[i][j] == 0:
-                cnt += 1
-    answer = max(cnt, answer)
+            if new[i][j] == 0:
+                sum += 1
 
-print(answer)
+    result = max(result, sum)
+print(result)
+
