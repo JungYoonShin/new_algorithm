@@ -1,69 +1,64 @@
-import sys
 from collections import deque
-from itertools import combinations as c
-input = sys.stdin.readline
 
 n, m = map(int, input().split())
 graph = [list(map(int, input().split())) for _ in range(n)]
 
 dx = [-1, 1, 0, 0]
-dy = [0, 0, 1, -1]
+dy = [0, 0, -1, 1]
 
-INF = 100000
-
-def bfs(q, blank_cnt):
-  time=0
-  visited = [[False] * n for _ in range(n)]
-
-  while True:
-    length = len(q)
-    if blank_cnt == 0:
-        return time
-    # 바이러스가 복제 X
-    elif length == 0:
-        return INF
-
-    time += 1
-
-    for _ in range(length):
-      x, y = q.popleft()
-      visited[x][y] = 1
-
-      for i in range(4):
-        new_x = x + dx[i]
-        new_y = y + dy[i]
-        if 0 <= new_x < n and 0 <= new_y < n and not visited[new_x][new_y]:
-          if not visited[new_x][new_y] and graph[new_x][new_y] == 0:
-            q.append([new_x, new_y])
-            blank_cnt -= 1
-            visited[new_x][new_y] = 1
-
-          if not visited[new_x][new_y] and graph[new_x][new_y] == 2:
-            q.append([new_x, new_y])
-            visited[new_x][new_y] = 1
-virus_location = []
-blank_cnt=0
+virus = []
 for i in range(n):
-  for j in range(n):
-    if graph[i][j] == 0:
-      blank_cnt += 1
-    if graph[i][j] == 2:
-      virus_location.append((i, j))
+    for j in range(n):
+        if graph[i][j] == 2:
+            virus.append((i, j))
 
+answer = []
 
-virus_list = c(virus_location, m)
+def find_combi(now, combi):
+    if len(combi) == m:
+        answer.append(combi[:])
+        return
+    for i in range(now, len(virus)):
+        combi.append(i)
+        find_combi(i + 1, combi)
+        combi.pop()
 
-result = INF
-for virus_combo in virus_list:
-  q = deque()
-  for virus in virus_combo:
-    q.append(virus)
+find_combi(0, [])
 
-  time = bfs(q, blank_cnt)
-  result = min(result, time)
+def bfs(combi):
+    dist = [[-1 for _ in range(n)] for _ in range(n)]
+    q = deque([])
 
-if result == INF:
-  print(-1)
-else:
-  print(result)
+    for idx in combi:
+        x, y = virus[idx]
+        q.append((x, y))
+        dist[x][y] = 0
 
+    while q:
+        x, y = q.popleft()
+        for d in range(4):
+            nx = x + dx[d]
+            ny = y + dy[d]
+            if 0 <= nx < n and 0 <= ny < n:
+                if graph[nx][ny] != 1 and dist[nx][ny] == -1:
+                    dist[nx][ny] = dist[x][y] + 1
+                    q.append((nx, ny))
+
+    max_time = 0
+    for i in range(n):
+        for j in range(n):
+            if graph[i][j] == 0:
+                if dist[i][j] == -1:
+                    return None
+                max_time = max(max_time, dist[i][j])
+
+    return max_time
+
+result = 10**9
+
+for combi in answer:
+    t = bfs(combi)
+    if t is not None:
+        result = min(result, t)
+
+print(-1 if result == 10**9 else result)
