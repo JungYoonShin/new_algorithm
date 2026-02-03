@@ -1,50 +1,36 @@
 import heapq
 def solution(n, paths, gates, summits):
-    answer = []
-    INF = 1e9
-    summit_set = set(summits)
-    gates_set = set(gates)
-    
+    answer = 1e9
+    result = []
     graph = [[] for _ in range(n+1)]
-    for path in paths:
-        a, b, cost = path
-        graph[a].append((b, cost))
-        graph[b].append((a, cost))
+    summits = set(summits)
+    for a, b, c in paths:
+        graph[a].append([b, c])
+        graph[b].append([a, c])
     
-    def djk(gate):
-        dist = [INF] * (n+1)
+    def djk():
         q = []
-        
-        for g in gate:
-            heapq.heappush(q, (0, g))
-            dist[g] = 0
+        intensity = [1e9] * (n+1)
+        for gate in gates:
+            heapq.heappush(q, (0, gate))
+            intensity[gate] = 0
             
         while q:
-            cost, now = heapq.heappop(q)
-            if dist[now] < cost or now in summit_set:
+            dist, now = heapq.heappop(q)
+            
+            #산봉우리에 도착한 경우
+            if now in summits:
+                result.append([now, min(answer, dist)])
                 continue
-                
-            for togo, distance in graph[now]:
-                if togo in gates_set:
-                    continue
-                new_intensity = max(dist[now], distance)
-                if new_intensity < dist[togo]:
-                    dist[togo] = new_intensity
-                    heapq.heappush(q, (dist[togo], togo))
-                    
-        return dist
-    
-    dis = djk(gates)
-    answer = [0, 1e9]  # [산봉우리 번호, intensity]
-    
-    for summit in summits:
-        if dis[summit] < answer[1]:
-            answer = [summit, dis[summit]]
-        elif dis[summit] == answer[1] and summit < answer[0]:
-            answer = [summit, dis[summit]]
-    
-    
-    
-    
-    
-    return answer
+            
+            if intensity[now] < dist:
+                continue
+            
+            for togo, d in graph[now]:
+                big = max(dist, d)
+                if big < intensity[togo]:
+                    intensity[togo] = big
+                    heapq.heappush(q, (big, togo))
+    djk()
+    result.sort(key = lambda x: (x[1], x[0]))
+    return result[0]
