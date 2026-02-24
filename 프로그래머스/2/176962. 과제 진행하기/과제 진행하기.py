@@ -1,74 +1,52 @@
+from collections import deque
 def solution(plans):
     answer = []
     
-    plans.sort(key = lambda x : x[1])
-    print(plans)
-    for idx, (name, start, playtime) in enumerate(plans):
-        h, m = map(int, plans[idx][1].split(":"))
-        plans[idx][1] = h * 60 + m
-        plans[idx][2] = int(plans[idx][2])
-    
-    stop = []
     finish = []
-
-    idx = 0
-    now = plans[0][1]
-
+    stop = []
     
-    while True:
-        if idx == len(plans) - 1:
-            answer.append(plans[idx][0])
-            while stop:
-                answer.append(stop.pop()[0])
-            break
-
-        name, start, remain = plans[idx]
-        next_start = plans[idx + 1][1]
+    for i in range(len(plans)):
+        h, m = plans[i][1].split(":")
+        plans[i][1] = int(h) * 60 + int(m)
+        plans[i][2] = int(plans[i][2])
+    
+    plans.sort(key = lambda x: x[1])
+        
+    for i in range(len(plans)):
+        if i + 1 < len(plans):
+            start = plans[i][1]
+            play_time = plans[i][2]
             
-        # 현재 과제 끝나는 시각
-        end_time = now + remain
-        
-        #새로 시작해야하는 과제가 등장한다면 
-        if next_start < end_time:
-            remain -= (next_start- now)
-            stop.append((name, remain))
-            now = next_start
-            idx += 1
-        
-        
+            next_start = plans[i+1][1]
+            
+            between = next_start - (start+play_time)
+
+            #이번 과제를 다 수행하고도 다음 과제까지 까지 시간이 남을 경우
+            if between > 0:
+                finish.append(plans[i][0])
+                while stop:
+                    a, b, c = stop.pop()
+                    if c - between == 0:
+                        finish.append(a)
+                        break
+                    elif c - between < 0:
+                        finish.append(a)
+                        between -= c
+                    else:
+                        stop.append([a, b, c-between])
+                        break
+                        
+            elif between == 0:
+                finish.append(plans[i][0])
+                
+            #중간에 멈춰야 하는 경우
+            else:
+                stop.append([plans[i][0], plans[i][1], plans[i][2] - (next_start - start)])
         else:
-            #다음 과제 시작 전까지 현재 과제를 끝낼 수 있는 경우
-            answer.append(name)
-            now = end_time
-            gap = next_start - end_time
-            
-            while stop and gap > 0:
-                s_name, s_remain = stop.pop()
-                if s_remain <= gap:
-                    now += s_remain
-                    gap -= s_remain
-                    answer.append(s_name)
-                else:
-                    stop.append((s_name, s_remain - gap))
-                    now += gap
-                    gap = 0
-            
-            
-            now = next_start
-            idx += 1
-                    
-                    
-        
-        
-            
-        
-            
-            
-            
-        
+            finish.append(plans[i][0])
+            while stop:
+                a, b, c = stop.pop()
+                finish.append(a)
         
     
-    
-    
-    
-    return answer
+    return finish
