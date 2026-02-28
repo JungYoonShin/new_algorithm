@@ -18,11 +18,17 @@ def solution(N, road, K):
             cost, now = heapq.heappop(q)
             if dist[now] < cost:
                 continue
-            
+                
             for v in graph[now]:
-                if dist[now] + v[1] < dist[v[0]]:
-                    dist[v[0]] = dist[now] + v[1]
+                if cost + v[1] < dist[v[0]]:
+                    dist[v[0]] = cost + v[1]
                     heapq.heappush(q, (dist[v[0]], v[0]))
+                    
+            
+            # for v in graph[now]:
+            #     if dist[now] + v[1] < dist[v[0]]:
+            #         dist[v[0]] = dist[now] + v[1]
+            #         heapq.heappush(q, (dist[v[0]], v[0]))
         return dist
     
     dist = djk()
