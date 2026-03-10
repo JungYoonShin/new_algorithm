@@ -24,6 +24,5 @@ for a in alphabet:
             break
     else:
         result.append([a])
-    result.sort(key = lambda x: -len(x))
 
 print(len(result[0]))
