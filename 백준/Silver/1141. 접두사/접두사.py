@@ -1,19 +1,29 @@
 n = int(input())
 alphabet = [input() for _ in range(n)]
+alphabet.sort(key = lambda x: (-len(x)))
+# print(alphabet)
 
-alphabet.sort(key=len, reverse= True)
 
-result = []
+result = [[]]
 
 for a in alphabet:
-    flag = False
     for group in result:
-        if group.startswith(a):
-            flag = True
+        flag = True
+        for g in group:
+            if g == a:
+                flag = False
+                break
+
+            if g.startswith(a) or a.startswith(g):
+                flag = False
+                break
+
+        #해당 그룹에 넣을 수 있다
+        if flag:
+            group.append(a)
             break
-    if not flag:
-        result.append(a)
+    else:
+        result.append([a])
+    result.sort(key = lambda x: -len(x))
 
-    result.sort(key=lambda x: -len(x))
-
-print(len(result))
+print(len(result[0]))
