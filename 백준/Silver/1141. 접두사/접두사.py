@@ -1,17 +1,19 @@
 n = int(input())
-words = [input().strip() for _ in range(n)]
+alphabet = [input() for _ in range(n)]
 
-words.sort(key=len, reverse=True)
+alphabet.sort(key=len, reverse= True)
 
-selected = []
+result = []
 
-for w in words:
-    ok = True
-    for s in selected:
-        if s.startswith(w):
-            ok = False
+for a in alphabet:
+    flag = False
+    for group in result:
+        if group.startswith(a):
+            flag = True
             break
-    if ok:
-        selected.append(w)
+    if not flag:
+        result.append(a)
 
-print(len(selected))
+    result.sort(key=lambda x: -len(x))
+
+print(len(result))
