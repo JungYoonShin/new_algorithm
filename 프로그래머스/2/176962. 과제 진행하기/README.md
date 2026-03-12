@@ -1,10 +1,10 @@
 # [level 2] 과제 진행하기 - 176962 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/176962?gad_source=1&gad_campaignid=22499034228&gbraid=0AAAAAC_c4nDZLfv9JQ9f8QLYO5pb19FmX&gclid=Cj0KCQiAtfXMBhDzARIsAJ0jp3B8Mc03eN5QOfGUJ47gDZ_u_FArcNdOMfTPHd0ecaMEbS2yOjBAq8oaAhYeEALw_wcB#) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/176962?gad_source=1&gad_campaignid=22356298761&gbraid=0AAAAAC_c4nBMoIyA49NgUd1H_DizO17QN&gclid=CjwKCAjwyMnNBhBNEiwA-Kcgu3uLiHFfnEO2iBE9yhF0S1IVr-lRoW52ReU2CGYC4XZrXpykUvc9_RoCgMkQAvD_BwE) 
 
 ### 성능 요약
 
-메모리: 9.62 MB, 시간: 1.97 ms
+메모리: 9.47 MB, 시간: 2.87 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2026년 02월 24일 21:52:49
+2026년 03월 12일 20:00:07
 
 ### 문제 설명
 

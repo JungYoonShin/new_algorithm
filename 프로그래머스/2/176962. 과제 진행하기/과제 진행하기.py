@@ -1,52 +1,57 @@
-from collections import deque
 def solution(plans):
     answer = []
     
-    finish = []
-    stop = []
-    
-    for i in range(len(plans)):
-        h, m = plans[i][1].split(":")
-        plans[i][1] = int(h) * 60 + int(m)
+    #무조건 새로운 과제를 시작할 시각 -> 기존 과제 stop, 새로운 과제 start
+    #과제 끝 => 멈춰둔 과제 start, 여러개면 가장 최근에 멈춘 과제
+    n = len(plans)
+    for i in range(n):
+        now = plans[i]
+        time = now[1].split(":")
+        plans[i][1] = int(time[0]) * 60 + int(time[1])
         plans[i][2] = int(plans[i][2])
     
     plans.sort(key = lambda x: x[1])
-        
-    for i in range(len(plans)):
-        if i + 1 < len(plans):
-            start = plans[i][1]
-            play_time = plans[i][2]
-            
-            next_start = plans[i+1][1]
-            
-            between = next_start - (start+play_time)
-
-            #이번 과제를 다 수행하고도 다음 과제까지 까지 시간이 남을 경우
-            if between > 0:
-                finish.append(plans[i][0])
-                while stop:
-                    a, b, c = stop.pop()
-                    if c - between == 0:
-                        finish.append(a)
-                        break
-                    elif c - between < 0:
-                        finish.append(a)
-                        between -= c
-                    else:
-                        stop.append([a, b, c-between])
-                        break
-                        
-            elif between == 0:
-                finish.append(plans[i][0])
-                
-            #중간에 멈춰야 하는 경우
-            else:
-                stop.append([plans[i][0], plans[i][1], plans[i][2] - (next_start - start)])
-        else:
-            finish.append(plans[i][0])
-            while stop:
-                a, b, c = stop.pop()
-                finish.append(a)
-        
+    print(plans)
+    idx = 0
+    stop = []
     
-    return finish
+    while True:
+        if len(answer) == n or idx > n-1:
+            break
+        now = plans[idx]
+        time = now[1]
+        playtime = now[2]
+
+        if idx < n-1:
+            #이번 과제를 끝내는 시간이 다음 과제 시작 시각보다 작고 멈춰둔 과제 있다면 실행
+            next_time = plans[idx+1][1]
+            if time + playtime == next_time:
+                answer.append(now[0])
+            elif time + playtime < next_time:
+                answer.append(now[0])
+                rest = next_time - (time+playtime)
+                if stop:
+                    while rest and stop:
+                        name, p = stop.pop()
+                        if rest == p:
+                            answer.append(name)
+                            break
+                        elif rest < p:
+                            stop.append([name, p-rest])
+                            break
+                        else:
+                            answer.append(name)
+                        
+                        rest -= p
+            else:
+                stop.append([now[0], playtime-(next_time - time)])
+        
+        else:
+            answer.append(now[0])
+        idx += 1
+    
+
+    for a, b in stop[::-1]:
+        answer.append(a)
+            
+    return answer
